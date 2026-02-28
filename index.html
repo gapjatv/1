@@ -32,8 +32,10 @@
             display: flex; gap: 8px; margin-bottom: 15px; width: 100%;
         }
         
+        /* [수정됨] 모바일에서 삐져나가지 않도록 비율(flex)과 min-width 조정 */
         input {
-            flex: 2; 
+            flex: 6; 
+            min-width: 0;
             padding: 15px; margin-bottom: 0; 
             border-radius: 10px; border: 1px solid #555;
             background: #222; color: white; font-size: 1.1rem;
@@ -41,9 +43,10 @@
         }
         
         select {
-            flex: 1; 
+            flex: 4; 
+            min-width: 0;
             padding: 15px 5px; border-radius: 10px; border: 1px solid #555;
-            background: #222; color: #ffcc00; font-size: 1rem; font-weight: bold;
+            background: #222; color: #ffcc00; font-size: 0.95rem; font-weight: bold;
             box-sizing: border-box; cursor: pointer; text-align: center;
         }
 
@@ -58,7 +61,7 @@
         
         .donate-btn-group { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .donate-btn {
-            flex: 1; padding: 12px 5px; border-radius: 8px; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; color: white; transition: transform 0.1s;
+            flex: 1; padding: 12px 2px; border-radius: 8px; border: none; font-weight: bold; font-size: 0.95rem; cursor: pointer; color: white; transition: transform 0.1s;
         }
         .donate-btn:active { transform: scale(0.95); }
         .btn-toon { background: linear-gradient(to right, #00a8ff, #0097e6); box-shadow: 0 3px 8px rgba(0, 168, 255, 0.4); }
@@ -69,7 +72,10 @@
         #successSection, #prioritySection, #prioritySuccessSection { display: none; }
         
         .success-icon { font-size: 4rem; color: #ffcc00; margin-bottom: 20px; }
-        .footer { margin-top: 20px; font-size: 0.8rem; color: #666; }
+        
+        /* [수정됨] 후원하기 링크 스타일 (기존 footer 스타일 유지 + 클릭 모션) */
+        .footer { margin-top: 20px; font-size: 0.8rem; color: #666; cursor: pointer; text-decoration: underline; transition: color 0.2s; }
+        .footer:hover { color: #ffcc00; }
         .back-link { margin-top: 20px; font-size: 0.85rem; color: #aaa; text-decoration: underline; cursor: pointer; }
     </style>
 </head>
@@ -93,7 +99,8 @@
             
             <button id="submitBtn" class="main-btn" onclick="sendData()">🚀 신청하기</button>
             <div id="cooldownMsg" class="cooldown-msg">도배 방지를 위해 잠시 후 다시 신청 가능합니다.</div>
-            <div class="footer">방송 화면의 대기 명단을 확인하세요!</div>
+            
+            <div class="footer" onclick="window.open('https://toon.at/donate/gapjatv', '_blank')">후원하기</div>
         </div>
 
         <div id="successSection">
@@ -112,7 +119,7 @@
             
             <div class="donate-btn-group">
                 <button class="donate-btn btn-toon" onclick="window.open('https://toon.at/donate/gapjatv', '_blank')">💎 투네이션 5,000원</button>
-                <button class="donate-btn btn-bank" onclick="copyBankAccount()">🏦 계좌후원</button>
+                <button class="donate-btn btn-bank" onclick="copyBankAccount()">🏦 계좌후원 5,000원</button>
             </div>
 
             <div class="input-group">
@@ -207,14 +214,12 @@
             document.getElementById('formSection').style.display = 'block';
         }
 
-        // [추가됨] 계좌번호 자동 복사 기능
         function copyBankAccount() {
-            const accountInfo = "3333-11-6729871"; // 복사될 계좌번호
+            const accountInfo = "3333-11-6729871"; 
             
             navigator.clipboard.writeText(accountInfo).then(() => {
                 alert("카카오뱅크 3333-11-6729871 (예금주: 백**)\n\n✅ 계좌번호가 복사되었습니다!\n소중한 후원 정말 감사드립니다!");
             }).catch(err => {
-                // 혹시 모를 브라우저 호환성 문제 방지용
                 alert("카카오뱅크 3333-11-6729871 (예금주: 백**)\n\n소중한 후원 정말 감사드립니다!");
             });
         }
