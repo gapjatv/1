@@ -21,8 +21,7 @@
         }
         
         .header-container { position: relative; width: 100%; text-align: center; margin-bottom: 10px; }
-        .live-status-text { position: absolute; top: 0; left: 0; font-size: 0.8rem; font-weight: bold; color: #6c757d; cursor: default; white-space: nowrap; }
-        .title-logo { width: 90px; height: auto; margin-top: 15px; margin-bottom: 5px; filter: drop-shadow(0 0 5px rgba(255,204,0,0.5)); }
+        .title-logo { width: 120px; height: auto; margin-top: 15px; margin-bottom: 5px; filter: drop-shadow(0 0 5px rgba(255,204,0,0.5)); }
         
         h1 { color: #ffcc00; margin: 0 0 10px 0; font-size: 1.5rem; line-height: 1.4; }
         .waiting-status {
@@ -32,23 +31,25 @@
         }
         #liveClock { color: #ffcc00; font-size: 1.1rem; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px; }
         
+        /* 7:3 비율 유지 */
         .input-group {
             display: flex; gap: 8px; margin-bottom: 15px; width: 100%;
         }
         input {
-            flex: 6; min-width: 0; padding: 15px; margin-bottom: 0; 
+            flex: 7; min-width: 0; padding: 15px; margin-bottom: 0; 
             border-radius: 10px; border: 1px solid #555;
             background: #222; color: white; font-size: 1.1rem;
             box-sizing: border-box; text-align: center;
         }
         select {
-            flex: 4; min-width: 0; padding: 15px 5px; border-radius: 10px; border: 1px solid #555;
+            flex: 3; min-width: 0; padding: 15px 5px; border-radius: 10px; border: 1px solid #555;
             background: #222; color: #ffcc00; font-size: 0.95rem; font-weight: bold;
             box-sizing: border-box; cursor: pointer; text-align: center;
         }
 
         button.main-btn {
-            width: 100%; padding: 15px; border-radius: 10px; border: none;
+            width: 100%; 
+            padding: 15px; border-radius: 10px; border: none; margin-bottom: 15px;
             background: #ffcc00; color: #000; font-size: 1.2rem; font-weight: 900; 
             cursor: pointer; box-shadow: 0 4px 10px rgba(255, 204, 0, 0.3);
             transition: transform 0.1s;
@@ -64,7 +65,7 @@
         .btn-toon { background: linear-gradient(to right, #00a8ff, #0097e6); box-shadow: 0 3px 8px rgba(0, 168, 255, 0.4); }
         .btn-bank { background: linear-gradient(to right, #4CAF50, #388E3C); box-shadow: 0 3px 8px rgba(76, 175, 80, 0.4); }
 
-        .cooldown-msg { color: #ff4444; font-size: 0.8rem; margin-top: 10px; display: none; }
+        .cooldown-msg { color: #ff4444; font-size: 0.8rem; margin-top: -5px; display: none; }
         
         #successSection, #prioritySection, #prioritySuccessSection { display: none; }
         .success-icon { font-size: 4rem; color: #ffcc00; margin-bottom: 20px; }
@@ -72,6 +73,24 @@
         .footer-link { margin-top: 20px; font-size: 0.8rem; color: #666; cursor: pointer; text-decoration: underline; transition: color 0.2s; font-family: 'Pretendard', 'Malgun Gothic', sans-serif;}
         .footer-link:hover { color: #ffcc00; }
         .back-link { margin-top: 20px; font-size: 0.85rem; color: #aaa; text-decoration: underline; cursor: pointer; }
+
+        /* 커스텀 팝업(모달) 스타일 추가 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 100;
+        }
+        .modal-box {
+            background: #222; padding: 25px 20px; border-radius: 15px; border: 2px solid #ffcc00;
+            width: 80%; max-width: 320px; text-align: center; box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+        }
+        .modal-box p { color: white; margin-bottom: 20px; font-size: 1.1rem; line-height: 1.5; font-weight: bold; }
+        .modal-btn-group { display: flex; gap: 10px; width: 100%; }
+        .modal-btn {
+            flex: 1; padding: 12px 0; border-radius: 8px; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; transition: transform 0.1s;
+        }
+        .modal-btn:active { transform: scale(0.95); }
+        .btn-cancel { background: #555; color: white; }
+        .btn-confirm { background: #ffcc00; color: black; }
     </style>
 </head>
 <body>
@@ -80,7 +99,6 @@
         <div id="formSection">
             
             <div class="header-container">
-                <div id="liveStatusText" class="live-status-text">⚪ 라이브(준비중)</div>
                 <img src="https://tistory1.daumcdn.net/tistory/4488967/skin/images/gajayu.png" class="title-logo">
             </div>
 
@@ -90,10 +108,11 @@
             
             <div class="input-group">
                 <input type="text" id="nickname" placeholder="게임 닉네임 입력">
-                <select id="modeSelect" onchange="checkPrioritySelect()">
+                <select id="modeSelect" onchange="checkModeSelect()">
                     <option value="태초">태초</option>
                     <option value="신">신</option>
-                    <option value="우선예약">우선예약</option>
+                    <option value="우선예약">우선예약(모든모드)</option>
+                    <option value="채팅">채팅</option>
                 </select>
             </div>
             
@@ -114,7 +133,7 @@
         </div>
 
         <div id="prioritySection">
-            <img src="https://tistory1.daumcdn.net/tistory/4488967/skin/images/gajayu.png" class="title-logo" style="display: block; margin: 0 auto 10px auto; width: 90px; margin-top: 0;">
+            <img src="https://tistory1.daumcdn.net/tistory/4488967/skin/images/gajayu.png" class="title-logo" style="display: block; margin: 0 auto 10px auto; width: 120px; margin-top: 0;">
             <h1>갑자ᵗᵛ 후원 및 우선예약</h1>
             
             <div class="donate-btn-group">
@@ -124,19 +143,21 @@
 
             <div class="input-group">
                 <input type="text" id="priorityNickname" placeholder="게임 닉네임 입력">
-                <select id="priorityModeSelect">
+                <select id="priorityModeSelect" onchange="checkPriorityModeSelect()">
+                    <option value="" disabled selected>선택</option>
                     <option value="태초">태초</option>
                     <option value="신">신</option>
                     <option value="지옥">지옥</option>
                     <option value="하드">하드</option>
                     <option value="일반">일반</option>
+                    <option value="채팅(알림)">채팅(알림)</option>
                 </select>
             </div>
             
-            <button id="prioritySubmitBtn" class="main-btn" onclick="sendPriorityData()">🚀 우선예약 신청</button>
+            <button id="prioritySubmitBtn" class="main-btn" onclick="openConfirmModal()">🚀 우선예약 신청</button>
             <div id="priorityCooldownMsg" class="cooldown-msg">도배 방지를 위해 1분 후 다시 신청 가능합니다.</div>
             
-            <div class="back-link" onclick="goBackToMain()">← 일반 시참 신청으로 돌아가기</div>
+            <div class="back-link" onclick="goBackToMain()">← 일반 신청가기</div>
         </div>
 
         <div id="prioritySuccessSection">
@@ -149,6 +170,16 @@
             <button onclick="location.reload()" style="background: #333; color: #fff; font-size: 0.9rem; padding: 10px; margin-top: 20px; border-radius: 8px; border:none; cursor:pointer;">처음으로</button>
         </div>
 
+    </div>
+
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-box">
+            <p>후원 완료 후<br>신청이 가능합니다.</p>
+            <div class="modal-btn-group">
+                <button class="modal-btn btn-cancel" onclick="closeConfirmModal()">돌아가기</button>
+                <button class="modal-btn btn-confirm" onclick="executePrioritySubmit()">신청완료</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -173,25 +204,11 @@
             fetch(GAS_URL)
                 .then(res => res.json())
                 .then(data => {
-                    // [수정됨] 데이터를 받아오면 "O명"으로 출력되도록 변경
                     document.getElementById('waitingCount').innerText = (data.count || 0) + "명";
-                    updateLiveStatus(data.isLive === true);
                 })
                 .catch(() => {
                     document.getElementById('waitingCount').innerText = "0명";
-                    updateLiveStatus(false);
                 });
-        }
-
-        function updateLiveStatus(isOnline) {
-            const statusText = document.getElementById('liveStatusText');
-            if(isOnline) {
-                statusText.innerText = "🔵 라이브(진행중)";
-                statusText.style.color = "#007bff"; 
-            } else {
-                statusText.innerText = "⚪ 라이브(준비중)";
-                statusText.style.color = "#6c757d"; 
-            }
         }
 
         function checkCooldown() {
@@ -216,12 +233,26 @@
             }
         }
 
-        function checkPrioritySelect() {
-            const mode = document.getElementById('modeSelect').value;
+        function checkModeSelect() {
+            const selectEl = document.getElementById('modeSelect');
+            const mode = selectEl.value;
+            
             if (mode === "우선예약") {
                 document.getElementById('formSection').style.display = 'none';
                 document.getElementById('prioritySection').style.display = 'block';
-                document.getElementById('modeSelect').value = "태초"; 
+                selectEl.value = "태초"; 
+            } else if (mode === "채팅") {
+                window.open('https://gapjatv.github.io/chat/', '_blank');
+                selectEl.value = "태초"; 
+            }
+        }
+
+        // 우선예약 창의 드롭다운 처리 추가
+        function checkPriorityModeSelect() {
+            const selectEl = document.getElementById('priorityModeSelect');
+            if (selectEl.value === "채팅(알림)") {
+                window.open('https://gapjatv.github.io/chat/', '_blank');
+                selectEl.value = ""; // 창 열고 나서 다시 '선택' 상태로 되돌림
             }
         }
 
@@ -268,13 +299,32 @@
             });
         }
 
-        function sendPriorityData() {
+        // 모달 열기 함수
+        function openConfirmModal() {
+            const input = document.getElementById('priorityNickname');
+            const selectEl = document.getElementById('priorityModeSelect');
+            const mode = selectEl.value;
+            const name = input.value.trim();
+
+            if (!name) return alert("게임 닉네임을 입력해주세요!");
+            if (!mode) return alert("모드를 선택해주세요!"); // '선택' 상태인 경우 방어
+
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        // 모달 닫기(돌아가기) 함수
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        // 실제 우선예약 전송 함수 (신청완료 클릭 시 실행)
+        function executePrioritySubmit() {
+            closeConfirmModal(); // 창 먼저 닫기
+
             const input = document.getElementById('priorityNickname');
             const mode = document.getElementById('priorityModeSelect').value; 
             const btn = document.getElementById('prioritySubmitBtn');
             const name = input.value.trim();
-
-            if (!name) return alert("게임 닉네임을 입력해주세요!");
 
             btn.disabled = true;
             btn.innerText = "전송 중...";
